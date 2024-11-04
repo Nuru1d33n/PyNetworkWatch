@@ -25,7 +25,6 @@ You can install the required packages using pip:
 pip install scapy python-nmap schedule psutil
 ```
 
-
 ### Next Steps
 
 - Update the README with your contact information and any specific installation instructions.
@@ -37,19 +36,3 @@ pip install scapy python-nmap schedule psutil
 Consider structuring your repository with the following folders and files:
 
 Feel free to adjust the README content or repository structure as needed! If you have any further questions or need help with anything else, just let me know!
-
-
-## Suggested Project Structure
-
-PyNetworkWatch/
-│
-├── main.py                   # Entry point of the NIDS, starts the monitoring
-├── requirements.txt          # List of required packages
-├── README.md                 # Project overview and instructions
-├── LICENSE                   # License information
-│
-├── network_monitor.py        # Contains functions for network monitoring and device detection
-├── alert.py                  # Handles alert notifications (e.g., email alerts)
-├── logger.py                 # Manages logging of detected devices and activities
-├── behavior_analysis.py       # Analyzes user behavior and identifies anomalies (optional)
-└── database.py               # Manages SQLite database interactions
