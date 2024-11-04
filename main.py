@@ -1,0 +1,1 @@
+# This will be the entry point of your application. It will import necessary functions from other modules and coordinate the overall functionality, such as starting the network monitor, logging, and alerting.
