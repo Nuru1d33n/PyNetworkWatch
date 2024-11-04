@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 
 deploy.sh
+test.py
+network_logs.db
