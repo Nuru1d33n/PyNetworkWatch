@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="table-container">
+    <h2 class="mt-4">Logged Devices</h2>
+    <div class="alert alert-info" role="alert">
+        This table shows the devices that have been detected on the network.
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">IP Address</th>
+                <th scope="col">MAC Address</th>
+                <th scope="col">Device Name</th>
+                <th scope="col">Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for device in devices %}
+            <tr>
+                <td>{{ device[0] }}</td>
+                <td>{{ device[1] }}</td>
+                <td>{{ device[2] }}</td>
+                <td>{{ device[3] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
