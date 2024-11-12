@@ -29,3 +29,9 @@ class Logger:
                 VALUES (?, ?, ?, ?)
             """, (ip, mac, device_name, timestamp))
             conn.commit()
+
+    def fetch_devices(self):
+        with sqlite3.connect(self.db_filename) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT ip, mac, name, timestamp FROM devices ORDER BY timestamp DESC")
+            return cursor.fetchall()

@@ -60,6 +60,42 @@ class NetworkMonitor:
                 self.alert_manager.send_alert(device_ip, device_mac)
                 print(f"New device: IP {device_ip}, MAC {device_mac}, Name: {device_name}")
 
+    def disconnect_device(self, ip, mac):
+        # This is a placeholder method.
+        # In practice, you might use firewall rules, IP blocking, or MAC address blocking.
+        # For demonstration, let's just print the action.
+        print(f"Disconnecting device with IP: {ip} and MAC: {mac}")
+        
+        # Example: Add logic here for firewall or network-level disconnection.
+        # Return True to indicate success.
+        return True
+
+    def deauth_device(self, target_mac, bssid, interface='wlan0'):
+        """
+        Sends deauth packets to the specified device.
+        
+        Parameters:
+            target_mac (str): The MAC address of the device to disconnect.
+            bssid (str): The MAC address of the access point.
+            interface (str): The network interface in monitor mode (e.g., wlan0).
+        """
+        try:
+            # Ensure that the interface is in monitor mode before running this command
+            cmd = [
+                "sudo", "aireplay-ng", "--deauth", "10", "-a", bssid, "-c", target_mac, interface
+            ]
+            result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+            if result.returncode == 0:
+                print(f"Successfully sent deauth packets to {target_mac}")
+                return True
+            else:
+                print(f"Failed to send deauth packets: {result.stderr}")
+                return False
+        except Exception as e:
+            print(f"Error during deauth: {e}")
+            return False
+
     def start_monitoring(self):
         self.scan_network()
         print("Starting live network monitoring...")

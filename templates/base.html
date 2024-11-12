@@ -21,6 +21,66 @@
         .alert {
             margin: 20px;
         }
+
+        .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+        }
+
+        .switch input { 
+        opacity: 0;
+        width: 0;
+        height: 0;
+        }
+
+        .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+        }
+
+        .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+        }
+
+        input:checked + .slider {
+        background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+        border-radius: 34px;
+        }
+
+        .slider.round:before {
+        border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -34,10 +94,56 @@
         {% endblock %}
     </div>
     <script>
-        setInterval(function() {
-            location.reload();  // Reload the current page every 30 seconds
-        }, 1000);  // 30000 milliseconds = 30 seconds
+        // setInterval(function() {
+        //     location.reload();  // Reload the current page every 30 seconds
+        // }, 1000);  // 30000 milliseconds = 30 seconds
     </script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        async function fetchDevices() {
+            const response = await fetch('/api/devices');
+            const devices = await response.json();
+            const deviceData = document.getElementById('deviceData');
+            deviceData.innerHTML = devices.map(device => `
+                <tr>
+                    <td>${device[0]}</td>
+                    <td>${device[1]}</td>
+                    <td>${device[2]}</td>
+                    <td>${device[3]}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" checked onclick="toggleDeviceConnection(event, '${device[0]}', '${device[1]}')">
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function toggleDeviceConnection(event, ip, mac) {
+            const isChecked = event.target.checked;
+            if (!isChecked) {
+                const response = await fetch('/api/disconnect_device', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ ip, mac })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert(`Device with IP ${ip} and MAC ${mac} disconnected.`);
+                } else {
+                    alert('Failed to disconnect the device.');
+                    event.target.checked = true;  // Re-check the switch if failed
+                }
+            }
+        }
+
+        setInterval(fetchDevices, 1000);  // Fetch devices every 5 seconds
+        fetchDevices();
+    </script>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
