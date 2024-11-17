@@ -110,33 +110,26 @@
                     <td>${device[1]}</td>
                     <td>${device[2]}</td>
                     <td>${device[3]}</td>
-                    <td>
-                        <label class="switch">
-                            <input type="checkbox" checked onclick="toggleDeviceConnection(event, '${device[0]}', '${device[1]}')">
-                            <span class="slider"></span>
-                        </label>
-                    </td>
+                    <!--<td>
+                        <button onclick="disconnectDevice('${device[0]}', '${device[1]}', 'GATEWAY_IP_HERE')" class="btn btn-danger">Disconnect</button>
+                    </td>-->
                 </tr>
             `).join('');
         }
 
-        async function toggleDeviceConnection(event, ip, mac) {
-            const isChecked = event.target.checked;
-            if (!isChecked) {
-                const response = await fetch('/api/disconnect_device', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ ip, mac })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    alert(`Device with IP ${ip} and MAC ${mac} disconnected.`);
-                } else {
-                    alert('Failed to disconnect the device.');
-                    event.target.checked = true;  // Re-check the switch if failed
-                }
+        async function disconnectDevice(ip, mac, gateway_ip) {
+            const response = await fetch('/api/arp_spoof', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ ip, mac, gateway_ip })
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert(`Device with IP ${ip} has been disconnected.`);
+            } else {
+                alert('Failed to disconnect the device.');
             }
         }
 

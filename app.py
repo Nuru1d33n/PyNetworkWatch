@@ -33,15 +33,16 @@ def get_logged_devices():
     devices = logger.fetch_devices()
     return jsonify(devices)
 
-# Disconnect device API
-@app.route('/api/disconnect_device', methods=['POST'])
-def disconnect_device():
+# ARP spoofing route
+@app.route('/api/arp_spoof', methods=['POST'])
+def arp_spoof():
     data = request.get_json()
-    device_ip = data.get("ip")
-    device_mac = data.get("mac")
-    
-    # Attempt to disconnect the device using the network monitor
-    success = network_monitor.disconnect_device(device_ip, device_mac)
+    target_ip = data.get("ip")
+    target_mac = data.get("mac")
+    gateway_ip = data.get("gateway_ip")
+
+    # Attempt ARP spoofing
+    success = network_monitor.arp_spoof(target_ip, target_mac, gateway_ip)
     
     return jsonify({"success": success})
 
@@ -55,10 +56,9 @@ def deauth_device():
 
     # Attempt to deauth the device
     success = network_monitor.deauth_device(target_mac, bssid)
-    
     return jsonify({"success": success})
 
-    
+
 if __name__ == '__main__':
     # Start network monitor in a separate thread
     monitor_thread = threading.Thread(target=start_network_monitor)

