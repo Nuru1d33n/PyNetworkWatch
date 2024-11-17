@@ -25,6 +25,32 @@ You can install the required packages using pip:
 pip install scapy python-nmap schedule psutil
 ```
 
+### Installation
+
+    # For Linux
+
+```
+git clone https://github.com/Nuru1d33n/PyNetworkWatch.git
+
+cd PyNetworkWatch
+
+source venv/bin/activate
+
+python app.py
+```
+
+    # For Windows
+
+```
+git clone https://github.com/Nuru1d33n/PyNetworkWatch.git
+
+cd PyNetworkWatch
+
+.\venv\Scripts\activate
+
+python app.py
+```
+
 
 ### Next Steps
 
